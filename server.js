@@ -72,5 +72,57 @@ app.get("/feedback", async (req, res) => {
   }
 });
 
+// --- Customer Service Week Feedback ---
+
+// Submit customer service feedback
+app.post("/customer-service-feedback", async (req, res) => {
+  try {
+    const {
+      account_number,
+      full_name,
+      days_with_water,
+      water_quality,
+      service_rating,
+      recommend_us,
+      improvement_suggestions,
+      location,
+    } = req.body;
+
+    const result = await pool.query(
+      `INSERT INTO csw_feedback
+      (account_number, full_name, days_with_water, water_quality, service_rating, recommend_us, improvement_suggestions, location)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      [
+        account_number,
+        full_name,
+        days_with_water,
+        water_quality,
+        service_rating,
+        recommend_us,
+        improvement_suggestions,
+        location,
+      ]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("❌ Error inserting customer service feedback:", err);
+    res.status(500).send("Error saving customer service feedback");
+  }
+});
+
+// Get all customer service feedback
+app.get("/customer-service-feedback", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM csw_feedback ORDER BY created_at DESC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ Error fetching customer service feedback:", err);
+    res.status(500).send("Error fetching customer service feedback");
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
