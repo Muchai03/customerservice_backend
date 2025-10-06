@@ -18,7 +18,7 @@ const pool = new Pool({
 // --- Customer Service Week Feedback ---
 
 // Submit customer service feedback
-app.post("/customer-service-feedback", async (req, res) => {
+app.post("/customerswf", async (req, res) => {
   try {
     const {
       account_number,
@@ -56,7 +56,7 @@ app.post("/customer-service-feedback", async (req, res) => {
 });
 
 // Get all customer service feedback
-app.get("/customer-service-feedback", async (req, res) => {
+app.get("/customerswf", async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM csw_feedback ORDER BY created_at DESC"
