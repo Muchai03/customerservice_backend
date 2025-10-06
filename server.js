@@ -15,6 +15,63 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
+// Submit feedback
+app.post("/feedback", async (req, res) => {
+  try {
+    const {
+      full_name,
+      water_account_number,
+      phone_number,
+      zone,
+      village,
+      uses_giwasco,
+      alternative_source,
+      water_quality,
+      days_per_week,
+      contact_method,
+      service_rating,
+      improvement_areas,
+      refer_neighbour,
+    } = req.body;
+
+    const result = await pool.query(
+      `INSERT INTO feedback 
+      (full_name, water_account_number, phone_number, zone, village, uses_giwasco, alternative_source, water_quality, days_per_week, contact_method, service_rating, improvement_areas, refer_neighbour) 
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+      [
+        full_name,
+        water_account_number,
+        phone_number,
+        zone,
+        village,
+        uses_giwasco,
+        alternative_source,
+        water_quality,
+        days_per_week,
+        contact_method,
+        service_rating,
+        improvement_areas,
+        refer_neighbour,
+      ]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("❌ Error inserting feedback:", err);
+    res.status(500).send("Error saving feedback");
+  }
+});
+
+// Get all feedback
+app.get("/feedback", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM feedback ORDER BY created_at DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ Error fetching feedback:", err);
+    res.status(500).send("Error fetching feedback");
+  }
+});
+
 // --- Customer Service Week Feedback ---
 
 // Submit customer service feedback
