@@ -137,6 +137,7 @@ app.post("/public-participation", async (req, res) => {
       ward,
       enumerator_name,
       consent_given,
+      respondent_name
       customer_status,
       phone_number,
       account_number,
@@ -155,7 +156,7 @@ app.post("/public-participation", async (req, res) => {
       expected_improvements
     ) VALUES (
       $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
-      $11,$12,$13,$14,$15,$16,$17,$18,$19
+      $11,$12,$13,$14,$15,$16,$17,$18,$19,$20
     )
     RETURNING id;
   `;
@@ -164,6 +165,7 @@ app.post("/public-participation", async (req, res) => {
     data.ward,
     data.enumerator_name,
     data.consent_given,
+    data.respondent_name,
     data.customer_status,
     data.phone_number,
     data.account_number,
