@@ -137,7 +137,7 @@ app.post("/public-participation", async (req, res) => {
       ward,
       enumerator_name,
       consent_given,
-      respondent_name
+      respondent_name,
       customer_status,
       phone_number,
       account_number,
