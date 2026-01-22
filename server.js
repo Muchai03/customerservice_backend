@@ -125,6 +125,74 @@ app.get("/customerswf", async (req, res) => {
   }
 });
 
+app.post("/public-participation", async (req, res) => {
+  const data = req.body;
+
+  if (!data.consent_given) {
+    return res.status(400).json({ error: "Consent not given" });
+  }
+
+  const query = `
+    INSERT INTO tariff_public_participation_responses (
+      ward,
+      enumerator_name,
+      consent_given,
+      customer_status,
+      phone_number,
+      account_number,
+      not_connected_reasons,
+      wants_future_connection,
+      connection_type,
+      gender,
+      age_group,
+      vulnerable_groups,
+      tariff_awareness_sources,
+      tariff_understanding,
+      willing_to_pay_more,
+      payment_priorities,
+      supports_tariff_adjustment,
+      support_reason,
+      expected_improvements
+    ) VALUES (
+      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
+      $11,$12,$13,$14,$15,$16,$17,$18,$19
+    )
+    RETURNING id;
+  `;
+
+  const values = [
+    data.ward,
+    data.enumerator_name,
+    data.consent_given,
+    data.customer_status,
+    data.phone_number,
+    data.account_number,
+    data.not_connected_reasons,
+    data.wants_future_connection,
+    data.connection_type,
+    data.gender,
+    data.age_group,
+    data.vulnerable_groups,
+    data.tariff_awareness_sources,
+    data.tariff_understanding,
+    data.willing_to_pay_more,
+    data.payment_priorities,
+    data.supports_tariff_adjustment,
+    data.support_reason,
+    data.expected_improvements
+  ];
+
+  try {
+    const result = await pool.query(query, values);
+    res.status(201).json({
+      success: true,
+      submission_id: result.rows[0].id
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to save response" });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
