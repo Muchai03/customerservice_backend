@@ -133,56 +133,95 @@ app.post("/public-participation", async (req, res) => {
   }
 
   const query = `
-    INSERT INTO tariff_public_participation_responses (
-      ward,
-      enumerator_name,
-      consent_given,
-      respondent_name,
-      customer_status,
-      phone_number,
-      account_number,
-      not_connected_reasons,
-      wants_future_connection,
-      connection_type,
-      gender,
-      age_group,
-      vulnerable_groups,
-      tariff_awareness_sources,
-      tariff_understanding,
-      willing_to_pay_more,
-      payment_priorities,
-      supports_tariff_adjustment,
-      support_reason,
-      expected_improvements
-    ) VALUES (
-      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
-      $11,$12,$13,$14,$15,$16,$17,$18,$19,$20
-    )
-    RETURNING id;
-  `;
+  INSERT INTO tariff_public_participation_responses (
+    ward,
+    enumerator_name,
+    consent_given,
+    respondent_name,
+    phone_number,
+    customer_status,
+    not_connected_reasons,
+    wants_future_connection,
+    account_number,
+    connection_type,
+    length_of_service,
+    receives_monthly_bill,
+    gender,
+    age_group,
+    vulnerable_groups,
+    aware_of_tariff,
+    tariff_awareness_sources,
+    tariff_understanding,
+    service_rating,
+    service_challenges,
+    water_frequency,
+    affordability,
+    payment_difficulty,
+    pay_more_conditions,
+    acceptable_increase,
+    willing_to_pay_more,
+    payment_priorities,
+    supports_tariff_adjustment,
+    support_reason,
+    expected_improvements,
+    vulnerable_negative_effect,
+    vulnerable_at_risk,
+    protection_measures,
+    cross_subsidy_support,
+    engagement_rating,
+    communication_channels,
+    main_concern,
+    single_improvement
+  ) VALUES (
+    $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
+    $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
+    $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,
+    $31,$32,$33,$34,$35,$36,$37,$38
+  )
+  RETURNING id;
+`;
 
-  const values = [
-    data.ward,
-    data.enumerator_name,
-    data.consent_given,
-    data.respondent_name,
-    data.customer_status,
-    data.phone_number,
-    data.account_number,
-    data.not_connected_reasons,
-    data.wants_future_connection,
-    data.connection_type,
-    data.gender,
-    data.age_group,
-    data.vulnerable_groups,
-    data.tariff_awareness_sources,
-    data.tariff_understanding,
-    data.willing_to_pay_more,
-    data.payment_priorities,
-    data.supports_tariff_adjustment,
-    data.support_reason,
-    data.expected_improvements
-  ];
+const values = [
+  data.ward,
+  data.enumerator_name,
+  data.consent_given,
+  data.respondent_name,
+  data.phone_number,
+  data.customer_status,
+  data.not_connected_reasons,
+  data.wants_future_connection,
+  data.account_number,
+  data.connection_type,
+  data.length_of_service,
+  data.receives_monthly_bill,
+  data.gender,
+  data.age_group,
+  data.vulnerable_groups,
+  data.aware_of_tariff,
+  data.tariff_awareness_sources,
+  data.tariff_understanding,
+  data.service_rating,
+  data.service_challenges,
+  data.water_frequency,
+  data.affordability,
+  data.payment_difficulty,
+  data.pay_more_conditions,
+  data.acceptable_increase,
+  data.willing_to_pay_more,
+  data.payment_priorities,
+  data.supports_tariff_adjustment,
+  data.support_reason,
+  data.expected_improvements,
+  data.vulnerable_negative_effect,
+  data.vulnerable_at_risk,
+  data.protection_measures,
+  data.cross_subsidy_support,
+  data.engagement_rating,
+  data.communication_channels,
+  data.main_concern,
+  data.single_improvement
+];
+
 
   try {
     const result = await pool.query(query, values);
