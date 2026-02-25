@@ -235,5 +235,125 @@ const values = [
   }
 });
 
+// Test Route
+app.get("/", (req, res) => {
+  res.send("Complaints backend is running");
+});
+
+// GET all complaints
+app.get("/complaints", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM complaints ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// POST new complaint
+app.post("/complaints", async (req, res) => {
+  const {
+    date,
+    customer_name,
+    connection_number,
+    location,
+    complaint_type,
+    description,
+    assigned_to,
+    registered_by,
+    status,
+  } = req.body;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO complaints 
+      (date, customer_name, connection_number, location, complaint_type, description, assigned_to, registered_by, status)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+      RETURNING *`,
+      [
+        date,
+        customer_name,
+        connection_number,
+        location,
+        complaint_type,
+        description,
+        assigned_to,
+        registered_by,
+        status || "Pending",
+      ]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// ✅ PUT update complaint
+app.put("/complaints/:id", async (req, res) => {
+  const id = req.params.id;
+  const {
+    date,
+    customer_name,
+    connection_number,
+    location,
+    complaint_type,
+    description,
+    assigned_to,
+    registered_by,
+    status,
+  } = req.body;
+
+  try {
+    const result = await pool.query(
+      `UPDATE complaints SET
+         date=$1,
+         customer_name=$2,
+         connection_number=$3,
+         location=$4,
+         complaint_type=$5,
+         description=$6,
+         assigned_to=$7,
+         registered_by=$8,
+         status=$9
+       WHERE id=$10
+       RETURNING *`,
+      [
+        date,
+        customer_name,
+        connection_number,
+        location,
+        complaint_type,
+        description,
+        assigned_to,
+        registered_by,
+        status,
+        id,
+      ]
+    );
+
+    if (result.rows.length === 0) return res.status(404).send("Complaint not found");
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// ✅ DELETE complaint
+app.delete("/complaints/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await pool.query("DELETE FROM complaints WHERE id=$1", [id]);
+    res.send("Deleted successfully");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
